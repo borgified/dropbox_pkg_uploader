@@ -46,7 +46,8 @@ my @files = glob ($path.'/*');
 
 foreach my $file (@files){
 	if($file eq ''){
-		next;
+		warn "no files were found!\n";
+		exit 42;
 	}else{
 		my $fh_put = IO::File->new($file);
 
