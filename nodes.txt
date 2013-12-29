@@ -1,6 +1,0 @@
-vux				=> 'ubuntu 12.10-i686',
-melnorme	=> 'ubuntu 13.04-i686',
-urquan		=> 'ubuntu 13.04-x86_64',
-arilou		=> 'ubuntu 12.04-x86_64',
-chmmr			=> 'ubuntu 12.10-x86_64',
-supox			=> 'ubuntu 11.10-x86_64',

@@ -3,28 +3,25 @@
 use strict;
 use warnings;
 use WebService::Dropbox;
+use File::Basename;
 
 my %config = do '/secret/dropbox.config';
-my %nodes = do 'nodes.txt';
+my %nodes = do '/secret/nodes.txt';
 
 #this script expects the following arguments:
-#upload.pl <${WORKSPACE}/filename.ext> <${BUILD_ID}> <${NODE_NAME}>
+#upload.pl /tmp/$build_number/$node <${BUILD_ID}> <${NODE_NAME}>
 #the ${} args are avail via jenkins script env
 #when new workers are added, nodes.txt needs to be updated
 
-print "@ARGV";
-
-my $date;
-my $os;
-my $os_vers;
-my $arch;
-my $filename;
+my $path=$ARGV[0];
+my $date=$ARGV[1]; #aka ${BUILD_ID}
+my $node=$ARGV[2];
 
 
 my $dropbox = WebService::Dropbox->new({
 		key			=> $config{'_2key'},
 		secret	=> $config{'_2secret'},
-		});
+	});
 
 my $access_token = $config{'_2access_token'};
 my $access_secret = $config{'_2access_secret'};
@@ -44,6 +41,14 @@ if (!$access_token or !$access_secret) {
 
 # upload
 # https://www.dropbox.com/developers/reference/api#files_put
-my $fh_put = IO::File->new('nodes.txt');
-#$dropbox->files_put('builds/atest.py', $fh_put) or die $dropbox->error;
-$fh_put->close;
+
+my @files = glob ($path.'/*');
+
+foreach my $file (@files){
+	my $fh_put = IO::File->new($file);
+
+	my $filename = basename($file);
+
+	$dropbox->files_put('builds/'.$date.'/'.$nodes{$node}.'/'.$filename, $fh_put) or die $dropbox->error;
+	$fh_put->close;
+}
