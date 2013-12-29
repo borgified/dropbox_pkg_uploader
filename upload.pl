@@ -45,10 +45,14 @@ if (!$access_token or !$access_secret) {
 my @files = glob ($path.'/*');
 
 foreach my $file (@files){
-	my $fh_put = IO::File->new($file);
+	if($file eq ''){
+		next;
+	}else{
+		my $fh_put = IO::File->new($file);
 
-	my $filename = basename($file);
+		my $filename = basename($file);
 
-	$dropbox->files_put('builds/'.$date.'/'.$nodes{$node}.'/'.$filename, $fh_put) or die $dropbox->error;
-	$fh_put->close;
+		$dropbox->files_put('builds/'.$date.'/'.$nodes{$node}.'/'.$filename, $fh_put) or die $dropbox->error;
+		$fh_put->close;
+	}
 }
