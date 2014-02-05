@@ -5,17 +5,39 @@ use warnings;
 use WebService::Dropbox;
 use File::Basename;
 
+use XML::Simple;
+
+
 my %config = do '/secret/dropbox.config';
 my %nodes = do '/secret/nodes.txt';
 
 #this script expects the following arguments:
-#upload.pl /tmp/$build_number/$node <${BUILD_ID}> <${NODE_NAME}>
+#upload.pl /tmp/$build_number/$node ${BUILD_ID} ${NODE_NAME} ${BUILD_NUMBER}
 #the ${} args are avail via jenkins script env
 #when new workers are added, nodes.txt needs to be updated
 
 my $path=$ARGV[0];
 my $date=$ARGV[1]; #aka ${BUILD_ID}
 my $node=$ARGV[2];
+my $build=$ARGV[3];
+
+
+#get build status for $node,$build
+my $url="http://localhost:8080/job/assimmon/label=$node/$build/api/xml";
+my $ua = LWP::UserAgent->new;
+my $req = HTTP::Request->new( GET => $url);
+my $res = $ua->request( $req );
+my $job = XML::Simple->new()->XMLin($res->content);
+my $status = $job->{result};
+#end of get build status
+
+if ($status ne 'SUCCESS'){
+	exit; #dont upload if build was not SUCCESSFUL
+}
+
+
+
+
 
 
 my $dropbox = WebService::Dropbox->new({
