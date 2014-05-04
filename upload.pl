@@ -23,7 +23,14 @@ my $build=$ARGV[3];
 
 
 #get build status for $node,$build
-my $url="http://localhost:8080/job/assimmon/label=$node/$build/api/xml";
+my $url;
+if($node=~/worker64-ub/){
+	$url="http://localhost:8080/job/assimmon/label=$node/$build/api/xml";
+}elsif($node=~/worker64-centos/){
+	$url="http://localhost:8080/job/assimmon-centos/label=$node/$build/api/xml";
+}else{
+	print "bad url: $url unable to locate jenkins xml results file\n";
+}
 my $ua = LWP::UserAgent->new;
 my $req = HTTP::Request->new( GET => $url);
 my $res = $ua->request( $req );
