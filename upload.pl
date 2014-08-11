@@ -28,6 +28,8 @@ if($node=~/worker\d\d-ub/){
 	$url="http://localhost:8080/job/assimmon/label=$node/$build/api/xml";
 }elsif($node=~/worker\d\d-centos/){
 	$url="http://localhost:8080/job/assimmon-centos/label=$node/$build/api/xml";
+}elsif($node=~/mycon/){
+	$url="http://localhost:8080/job/assimmon/label=$node/$build/api/xml";
 }else{
 	print "bad url: $url unable to locate jenkins xml results file\n";
 }
